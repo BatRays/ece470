@@ -1,0 +1,20 @@
+[1.198s] Invoking command in '/home/rayy2/ECE470Labs/lab_files/build/ece470labs': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/rayy2/ECE470Labs/lab_files/build/ece470labs/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/rayy2/ECE470Labs/lab_files/install/ece470labs/lib/python3.12/site-packages: /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/rayy2/ECE470Labs/lab_files/build/ece470labs/build --no-deps symlink_data
+[1.531s] running develop
+[1.634s] running egg_info
+[1.642s] writing ece470labs.egg-info/PKG-INFO
+[1.642s] writing dependency_links to ece470labs.egg-info/dependency_links.txt
+[1.642s] writing entry points to ece470labs.egg-info/entry_points.txt
+[1.642s] writing requirements to ece470labs.egg-info/requires.txt
+[1.643s] writing top-level names to ece470labs.egg-info/top_level.txt
+[1.664s] reading manifest file 'ece470labs.egg-info/SOURCES.txt'
+[1.665s] writing manifest file 'ece470labs.egg-info/SOURCES.txt'
+[1.682s] running build_ext
+[1.683s] Creating /home/rayy2/ECE470Labs/lab_files/install/ece470labs/lib/python3.12/site-packages/ece470labs.egg-link (link to .)
+[1.683s] Installing lab2_exec script to /home/rayy2/ECE470Labs/lab_files/install/ece470labs/lib/ece470labs
+[1.683s] Installing lab3_exec script to /home/rayy2/ECE470Labs/lab_files/install/ece470labs/lib/ece470labs
+[1.684s] Installing lab4_exec script to /home/rayy2/ECE470Labs/lab_files/install/ece470labs/lib/ece470labs
+[1.684s] Installing lab5_exec script to /home/rayy2/ECE470Labs/lab_files/install/ece470labs/lib/ece470labs
+[1.684s] 
+[1.684s] Installed /home/rayy2/ECE470Labs/lab_files/build/ece470labs
+[1.684s] running symlink_data
+[1.710s] Invoked command in '/home/rayy2/ECE470Labs/lab_files/build/ece470labs' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/rayy2/ECE470Labs/lab_files/build/ece470labs/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/rayy2/ECE470Labs/lab_files/install/ece470labs/lib/python3.12/site-packages: /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/rayy2/ECE470Labs/lab_files/build/ece470labs/build --no-deps symlink_data

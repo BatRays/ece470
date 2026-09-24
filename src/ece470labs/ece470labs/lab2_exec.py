@@ -20,21 +20,21 @@ class JointAngles:
 home = np.radians([120, -90, 90, -90, -90, 0])
 
 # Hanoi tower location 
-Q11 = [120*pi/180.0, -56*pi/180.0, 124*pi/180.0, -158*pi/180.0, -90*pi/180.0, 0*pi/180.0]
-Q12 = [120*pi/180.0, -64*pi/180.0, 123*pi/180.0, -148*pi/180.0, -90*pi/180.0, 0*pi/180.0]
-Q13 = [120*pi/180.0, -72*pi/180.0, 120*pi/180.0, -137*pi/180.0, -90*pi/180.0, 0*pi/180.0]
+Q11 = [134.13*pi/180.0, -54.89*pi/180.0, 111.73*pi/180.0, -146.82*pi/180.0, -89.87*pi/180.0, 358.18*pi/180.0]
+Q12 = [134.14*pi/180.0, -61.04*pi/180.0, 110.44*pi/180.0, -139.38*pi/180.0, -89.8490*pi/180.0, 358.17*pi/180.0]
+Q13 = [134.15*pi/180.0, -66.92*pi/180.0, 107.82*pi/180.0, -130.87*pi/180.0, -89.81*pi/180.0, 358.15*pi/180.0]
 
 ############## Your Code Start Here ##############
 """
 TODO: Initialize Q matrix
 """
-Q21 = [120*pi/180.0, -56*pi/180.0, 124*pi/180.0, -158*pi/180.0, -90*pi/180.0, 0*pi/180.0]
-Q22 = [120*pi/180.0, -64*pi/180.0, 123*pi/180.0, -148*pi/180.0, -90*pi/180.0, 0*pi/180.0]
-Q23 = [120*pi/180.0, -72*pi/180.0, 120*pi/180.0, -137*pi/180.0, -90*pi/180.0, 0*pi/180.0]
+Q21 = [155.93*pi/180.0, -59.80*pi/180.0, 123.08*pi/180.0, -153.25*pi/180.0, -89.90*pi/180.0, 19.90*pi/180.0]
+Q22 = [155.94*pi/180.0, -67.44*pi/180.0, 121.57*pi/180.0, -144.11*pi/180.0, -89.86*pi/180.0, 19.97*pi/180.0]
+Q23 = [155.95*pi/180.0, -74.09*pi/180.0, 118.79*pi/180.0, -134.67*pi/180.0, -89.83*pi/180.0, 19.96*pi/180.0]
 
-Q31 = [120*pi/180.0, -56*pi/180.0, 124*pi/180.0, -158*pi/180.0, -90*pi/180.0, 0*pi/180.0]
-Q32 = [120*pi/180.0, -64*pi/180.0, 123*pi/180.0, -148*pi/180.0, -90*pi/180.0, 0*pi/180.0]
-Q33 = [120*pi/180.0, -72*pi/180.0, 120*pi/180.0, -137*pi/180.0, -90*pi/180.0, 0*pi/180.0]
+Q31 = [182.15*pi/180.0, -54.94*pi/180.0, 112.14*pi/180.0, -147.17*pi/180.0, -89.87*pi/180.0, 46.21*pi/180.0]
+Q32 = [182.16*pi/180.0, -61.31*pi/180.0, 110.82*pi/180.0, -139.48*pi/180.0, -89.84*pi/180.0, 46.19*pi/180.0]
+Q33 = [182.17*pi/180.0, -67.16*pi/180.0, 108.21*pi/180.0, -131.02*pi/180.0, -89.81*pi/180.0, 46.18*pi/180.0]
 
 Q = [ [Q11, Q12, Q13], \
       [Q21, Q22, Q23], \
@@ -90,7 +90,8 @@ class UR3e(Node):
         publishes this info, this callback function is
         called.
         """
-        self.analog_in__0 = msg
+
+        self.analog_in_0_value = msg.analog_in_states[0].state
         pass
 
     ############### Your Code End Here ###############
@@ -184,16 +185,14 @@ class UR3e(Node):
 
         move_arm(Q[start_tower][start_height])
         set_io(0, 1.0)  # Turn on suction
+        time.sleep(1.0)  # Delay to make sure suction cup has grasped
         if (self.analog_in_0_value < 1.0):
             self.get_logger().error("Suction cup failed to grasp the block!")
             return 1
-        time.sleep(1.0)  # Delay to make sure suction cup has grasped
         move_arm(Q[end_tower][end_height])
         set_io(0, 0.0)  # Turn off suction
         
         error = 0
-
-
 
         return error
 
@@ -223,22 +222,28 @@ def main(args=None):
 
     try:
         # Get user input
-        start = int(input("Enter starting position"))
-        end = int(input("Enter ending position"))
-        intermediate = 6 - start - end
+        start = int(input("Enter starting position")) - 1
+        end = int(input("Enter ending position")) - 1
+        intermediate = 3 - start - end
         print("You entered " + str(start) + " and " + str(end) + "\n")
 
         ############## Your Code Start Here ##############
         # TODO: modify the code so that UR3e can move tower accordingly from user input
 
-        move_block(self, start, 3, end, 1)
-        move_block(self, start, 2, intermediate, 1)
-        move_block(self, end, 1, intermediate, 2)
-        move_block(self, start, 1, end, 1)
-        move_block(self, intermediate, 2, start, 1)
-        move_block(self, intermediate, 1, end, 2)
-        move_block(self, start, 1, end, 3)
-
+        if (node.move_block(self, start, 2, end, 0)):
+            break
+        if (node.move_block(self, start, 1, intermediate, 0)):
+            break
+        if (node.move_block(self, end, 0, intermediate, 1)):
+            break   
+        if (node.move_block(self, start, 0, end, 0)):
+            break
+        if (node.move_block(self, intermediate, 1, start, 0)):
+            break
+        if (node.move_block(self, intermediate, 0, end, 1)):
+            break
+        if (node.move_block(self, start, 0, end, 2)):
+            break
 
     except KeyboardInterrupt:
         pass
