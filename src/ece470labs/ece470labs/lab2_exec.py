@@ -17,12 +17,12 @@ class JointAngles:
         self.position = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
 # UR3e home position
-home = np.radians([120, -90, 90, -90, -90, 0])
+home = np.radians([156, -88.77, 92.12, -93.32, -89.73, 19.85])
 
 # Hanoi tower location 
-Q11 = [134.13*pi/180.0, -54.89*pi/180.0, 111.73*pi/180.0, -146.82*pi/180.0, -89.87*pi/180.0, 358.18*pi/180.0]
-Q12 = [134.14*pi/180.0, -61.04*pi/180.0, 110.44*pi/180.0, -139.38*pi/180.0, -89.8490*pi/180.0, 358.17*pi/180.0]
-Q13 = [134.15*pi/180.0, -66.92*pi/180.0, 107.82*pi/180.0, -130.87*pi/180.0, -89.81*pi/180.0, 358.15*pi/180.0]
+Q11 = [144.57*pi/180.0, -58.54*pi/180.0, 120.35*pi/180.0, -151.78*pi/180.0, -89.86*pi/180.0, 103.57*pi/180.0]
+Q12 = [144.57*pi/180.0, -65.78*pi/180.0, 118.92*pi/180.0, -143.12*pi/180.0, -89.86*pi/180.0, 103.57*pi/180.0]
+Q13 = [144.60*pi/180.0, -72.27*pi/180.0, 116.18*pi/180.0, -133.88*pi/180.0, -89.83*pi/180.0, 103.55*pi/180.0]
 
 ############## Your Code Start Here ##############
 """
@@ -176,21 +176,27 @@ class UR3e(Node):
         return False
 
 
+    def wait(self,sec):
+        end = time.monotonic() + sec
+        while time.monotonic() < end:
+            rclpy.spin_once(self, timeout_sec=0.05)
 
     def move_block(self, start_tower, start_height, end_tower, end_height):
         global Q
     ############## Your Code Start Here ##############
     # TODO: add code to move block from start tower and height to end tower and height
     ### Hint: Use the Q array to map out your towers by location and "height".
-
-        move_arm(Q[start_tower][start_height])
-        set_io(0, 1.0)  # Turn on suction
-        time.sleep(1.0)  # Delay to make sure suction cup has grasped
-        if (self.analog_in_0_value < 1.0):
+        self.move_arm(home)
+        self.move_arm(Q[start_tower][start_height])
+        self.set_io(0, 1.0)  # Turn on suction
+        self.wait(1)  # Delay to make sure suction cup has grasped
+        if (self.analog_in_0_value < 2.0):
             self.get_logger().error("Suction cup failed to grasp the block!")
+            self.set_io(0, 0.0)
             return 1
-        move_arm(Q[end_tower][end_height])
-        set_io(0, 0.0)  # Turn off suction
+        self.move_arm(home) 
+        self.move_arm(Q[end_tower][end_height])
+        self.set_io(0, 0.0)  # Turn off suction
         
         error = 0
 
@@ -230,20 +236,28 @@ def main(args=None):
         ############## Your Code Start Here ##############
         # TODO: modify the code so that UR3e can move tower accordingly from user input
 
-        if (node.move_block(self, start, 2, end, 0)):
-            break
-        if (node.move_block(self, start, 1, intermediate, 0)):
-            break
-        if (node.move_block(self, end, 0, intermediate, 1)):
-            break   
-        if (node.move_block(self, start, 0, end, 0)):
-            break
-        if (node.move_block(self, intermediate, 1, start, 0)):
-            break
-        if (node.move_block(self, intermediate, 0, end, 1)):
-            break
-        if (node.move_block(self, start, 0, end, 2)):
-            break
+        
+        if (node.move_block(start, 2, end, 0)):
+            return
+           
+        if (node.move_block(start, 1, intermediate, 0)):
+            return
+             
+        if (node.move_block(end, 0, intermediate, 1)):
+            return 
+         
+        if (node.move_block(start, 0, end, 0)):
+            return
+        
+        if (node.move_block(intermediate, 1, start, 0)):
+            return   
+          
+        if (node.move_block(intermediate, 0, end, 1)):
+            return
+        
+        if (node.move_block(start, 0, end, 2)):
+            return
+        
 
     except KeyboardInterrupt:
         pass
