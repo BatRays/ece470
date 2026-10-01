@@ -17,17 +17,27 @@ class JointAngles:
         self.position = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
 # UR3e home position
+<<<<<<< HEAD
 home = np.radians([156, -88.77, 92.12, -93.32, -89.73, 19.85])
 
 # Hanoi tower location 
 Q11 = [144.57*pi/180.0, -58.54*pi/180.0, 120.35*pi/180.0, -151.78*pi/180.0, -89.86*pi/180.0, 103.57*pi/180.0]
 Q12 = [144.57*pi/180.0, -65.78*pi/180.0, 118.92*pi/180.0, -143.12*pi/180.0, -89.86*pi/180.0, 103.57*pi/180.0]
 Q13 = [144.60*pi/180.0, -72.27*pi/180.0, 116.18*pi/180.0, -133.88*pi/180.0, -89.83*pi/180.0, 103.55*pi/180.0]
+=======
+home = np.radians([120, -90, 90, -90, -90, 0])
+
+# Hanoi tower location 
+Q11 = [120*pi/180.0, -56*pi/180.0, 124*pi/180.0, -158*pi/180.0, -90*pi/180.0, 0*pi/180.0]
+Q12 = [120*pi/180.0, -64*pi/180.0, 123*pi/180.0, -148*pi/180.0, -90*pi/180.0, 0*pi/180.0]
+Q13 = [120*pi/180.0, -72*pi/180.0, 120*pi/180.0, -137*pi/180.0, -90*pi/180.0, 0*pi/180.0]
+>>>>>>> 580b939 (Lab 3 End Effector)
 
 ############## Your Code Start Here ##############
 """
 TODO: Initialize Q matrix
 """
+<<<<<<< HEAD
 Q21 = [155.93*pi/180.0, -59.80*pi/180.0, 123.08*pi/180.0, -153.25*pi/180.0, -89.90*pi/180.0, 19.90*pi/180.0]
 Q22 = [155.94*pi/180.0, -67.44*pi/180.0, 121.57*pi/180.0, -144.11*pi/180.0, -89.86*pi/180.0, 19.97*pi/180.0]
 Q23 = [155.95*pi/180.0, -74.09*pi/180.0, 118.79*pi/180.0, -134.67*pi/180.0, -89.83*pi/180.0, 19.96*pi/180.0]
@@ -39,6 +49,12 @@ Q33 = [182.17*pi/180.0, -67.16*pi/180.0, 108.21*pi/180.0, -131.02*pi/180.0, -89.
 Q = [ [Q11, Q12, Q13], \
       [Q21, Q22, Q23], \
       [Q31, Q32, Q33] ]
+=======
+
+Q = [ [Q11, Q12, Q13], \
+      [Q11, Q12, Q13], \
+      [Q11, Q12, Q13] ]
+>>>>>>> 580b939 (Lab 3 End Effector)
 ############### Your Code End Here ###############
 class UR3e(Node):
     def __init__(self):
@@ -53,7 +69,11 @@ class UR3e(Node):
         ############## Your Code Start Here ##############
         # TODO: define a ROS subscriber for gripper input message and corresponding callback function
         # ROS2 gripper input topic: /io_and_status_controller/io_states
+<<<<<<< HEAD
         self.io_feedback_sub = self.create_subscription(IOStates, '/io_and_status_controller/io_states', self.io_state_callback, 10)
+=======
+
+>>>>>>> 580b939 (Lab 3 End Effector)
 
         ############### Your Code End Here ###############
 
@@ -91,7 +111,10 @@ class UR3e(Node):
         called.
         """
 
+<<<<<<< HEAD
         self.analog_in_0_value = msg.analog_in_states[0].state
+=======
+>>>>>>> 580b939 (Lab 3 End Effector)
         pass
 
     ############### Your Code End Here ###############
@@ -176,16 +199,20 @@ class UR3e(Node):
         return False
 
 
+<<<<<<< HEAD
     def wait(self,sec):
         end = time.monotonic() + sec
         while time.monotonic() < end:
             rclpy.spin_once(self, timeout_sec=0.05)
+=======
+>>>>>>> 580b939 (Lab 3 End Effector)
 
     def move_block(self, start_tower, start_height, end_tower, end_height):
         global Q
     ############## Your Code Start Here ##############
     # TODO: add code to move block from start tower and height to end tower and height
     ### Hint: Use the Q array to map out your towers by location and "height".
+<<<<<<< HEAD
         self.move_arm(home)
         self.move_arm(Q[start_tower][start_height])
         self.set_io(0, 1.0)  # Turn on suction
@@ -200,6 +227,13 @@ class UR3e(Node):
         
         error = 0
 
+=======
+
+        error = 0
+
+
+
+>>>>>>> 580b939 (Lab 3 End Effector)
         return error
 
     ############### Your Code End Here ###############
@@ -228,14 +262,32 @@ def main(args=None):
 
     try:
         # Get user input
+<<<<<<< HEAD
         start = int(input("Enter starting position")) - 1
         end = int(input("Enter ending position")) - 1
         intermediate = 3 - start - end
         print("You entered " + str(start) + " and " + str(end) + "\n")
+=======
+        input_string = input("Enter number of loops <Either 1 2 3 or 0 to quit> ")
+        print("You entered " + input_string + "\n")
+
+        if(int(input_string) == 1):
+            loop_count = 1
+        elif (int(input_string) == 2):
+            loop_count = 2
+        elif (int(input_string) == 3):
+            loop_count = 3
+        elif (int(input_string) == 0):
+            print("Quitting... ")
+            sys.exit()
+        else:
+            print("Please just enter the character 1 2 3 or 0 to quit \n\n")
+>>>>>>> 580b939 (Lab 3 End Effector)
 
         ############## Your Code Start Here ##############
         # TODO: modify the code so that UR3e can move tower accordingly from user input
 
+<<<<<<< HEAD
         
         if (node.move_block(start, 2, end, 0)):
             return
@@ -258,6 +310,33 @@ def main(args=None):
         if (node.move_block(start, 0, end, 2)):
             return
         
+=======
+        while(loop_count > 0):
+
+            node.move_arm(home)
+
+            node.get_logger().info(f'Sending goal 1 ...')
+
+            if not node.move_arm(Q[0][0]):
+                node.get_logger().error("Failed to move to goal" + str(Q[0][0]))
+                break
+
+            node.set_io(0, 1.0)  # Turn/ on suction
+            # Delay to make sure suction cup has grasped the block
+            time.sleep(1.0)
+
+            node.get_logger().info(f'Sending goal 2 ...')
+            if not node.move_arm(Q[1][1]):
+                node.get_logger().error("Failed to move to goal"+str(Q[1][1]))
+                break
+
+            node.get_logger().info(f'Sending goal 3 ...')
+            if not node.move_arm(Q[2][2]):
+                node.get_logger().error("Failed to move to goal"+str(Q[2][2]))
+                break
+            loop_count = loop_count - 1
+            node.set_io(0, 0.0)  # Turn off suction
+>>>>>>> 580b939 (Lab 3 End Effector)
 
     except KeyboardInterrupt:
         pass
