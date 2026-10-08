@@ -12,17 +12,19 @@ Angles are in radian, distance are in meters.
 def Get_MS():
 	# =================== Your code starts here ====================#
 	# Fill in the correct values for S1~6, as well as the M matrix
-<<<<<<< HEAD
-	M = np.eye(4)
-	S = np.zeros((6,6))
- 
-=======
 	# end effector frame relative to base frame, x y z values are last column bottom row is 0,0,0,1 for movement purpsoes
-	M = np.array([[0,0,-1,152 + 244 + 213 + 85 - 150],[-1,0,0,150 + 120 -93 + 104 + 92 + 59],[0,-1,0,215.5],[0,0,0,1]])
-	S = np.array([[0,0,1,0,0,150],[0,1,0,150,0,0],[0,1,0,0,0,0],[0,1,0,0,0,0],[1,0,0,0,0,0],[0,1,0,0,0,0]])
-	pos = np.array([-150, 150, 0], [-150 ,270,162], [94, 270, 162],[309, 177, 162][-150 + 152 + 244 + 213,150 + 120 - 93 + 104,])
->>>>>>> 580b939 (Lab 3 End Effector)
-
+	M = np.array([[0,-1,0,-150 + 244 + 213 + 85],
+				[0,0,-1,150 + 120 -93 + 104 + 92 + 59],
+				[1,0,0,53.5 + 152 ],
+				[0,0,0,1]])
+	S = np.array([[0,0,1,0,0,150],
+					[0,1,0,150,0,0],
+					[0,1,0,0,0,0],
+					[0,1,0,0,0,0],
+					[1,0,0,0,0,0],
+					[0,1,0,0,0,0]]).T
+	pos = np.array([[150, -150, 0], [150 ,-150,152], [94, 270, 152],[459,177,152],[459, 281, 152],[544,281,152]])
+	S[3:, :] = -np.cross(S[:3, :].T, pos).T
 	# ==============================================================#
 	return M, S
 
@@ -39,13 +41,33 @@ def lab_fk(theta1, theta2, theta3, theta4, theta5, theta6):
 	print("Foward kinematics calculated:\n")
 
 	# =================== Your code starts here ====================#
+	T = np.eye(4)
+	thetas = np.array([theta1, theta2, theta3, theta4, theta5, theta6]) * (np.pi/180)
+	M,S = Get_MS()
+	for i in range(S.shape[1]):
+		
+		S_col = S[:, i]
+		
+		w = S_col[:3]
+		v = S_col[3:]
+		
 
-	T = [ [1.0, 0.0, 0.0], \
-      [0.0, 1.0, 0.0], \
-      [0.0, 0.0, 1.0] ]
-	# ==============================================================#
+		w_skew = np.array([
+			[ 0,     -w[2],  w[1]],
+			[ w[2],   0,    -w[0]],
+			[-w[1],   w[0],  0   ]
+		])
+		
+		se3_matrix = np.zeros((4, 4))
+		se3_matrix[:3, :3] = w_skew
+		se3_matrix[:3, 3] = v
+	
+		T_joint = expm(se3_matrix * thetas[i])
+		T = T @ T_joint
 
-	print(str(T) + "\n")
+	T_final = T @ M
+
+	print(str(T_final) + "\n")
 
 	return_value[0] = theta1 + pi
 	return_value[1] = theta2
