@@ -42,7 +42,7 @@ def lab_fk(theta1, theta2, theta3, theta4, theta5, theta6):
 
 	# =================== Your code starts here ====================#
 	T = np.eye(4)
-	thetas = np.array([theta1, theta2, theta3, theta4, theta5, theta6]) * (np.pi/180)
+	thetas = np.array([theta1, theta2, theta3, theta4, theta5, theta6]) 
 	M,S = Get_MS()
 	for i in range(S.shape[1]):
 		
