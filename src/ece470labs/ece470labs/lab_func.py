@@ -85,12 +85,82 @@ Function that calculates an elbow up Inverse Kinematic solution for the UR3
 def lab_invk(xWgrip, yWgrip, zWgrip, yaw_WgripDegree):
 	# =================== Your code starts here ====================#
 	
-	theta1 = 0.0
-	theta2 = 0.0
-	theta3 = 0.0
-	theta4 = 0.0
-	theta5 = 0.0
-	theta6 = 0.0
+	L3 = 244
+	L5 = 213
+	L7 = 85
+	L9 = 53.5
 	
+	drop = 92 + 59
+	lateral = 120 - 93 + 104
+	shoulder_z = 152
+	
+	xgrip = float(xWgrip) * 1000 + 150
+	ygrip = float(yWgrip) * 1000 - 150
+	zgrip = float(zWgrip) * 1000
+	
+	yaw = math.radians(float(yaw_WgripDegree))
+	
+	xcen = xgrip - L9 * math.cos(yaw)
+	ycen = ygrip - L9 * math.sin(yaw)
+	zcen = zgrip
+	
+	radius = math.hypot(xcen, ycen)
+	
+	if radius < lateral - 1e-9:
+	    raise ValueError("Unreachable XY point")
+	
+	correction = math.asin(
+	    float(np.clip(lateral / radius, -1.0, 1.0))
+	)
+	
+	theta1 = math.atan2(ycen, xcen) - correction
+	
+	theta6 = theta1 + pi / 2.0 - yaw
+	theta6 = (theta6 + pi) % (2.0 * pi) - pi
+	
+	x3end = (
+	    xcen
+	    - L7 * math.cos(theta1)
+	    + lateral * math.sin(theta1)
+	)
+	
+	y3end = (
+	    ycen
+	    - L7 * math.sin(theta1)
+	    - lateral * math.cos(theta1)
+	)
+	
+	z3end = zcen + drop
+	
+	r = (
+	    x3end * math.cos(theta1)
+	    + y3end * math.sin(theta1)
+	)
+	
+	h = z3end - shoulder_z
+	
+	cos_theta3 = (
+	    r**2 + h**2 - L3**2 - L5**2
+	) / (2.0 * L3 * L5)
+	
+	if not -1.0 - 1e-9 <= cos_theta3 <= 1.0 + 1e-9:
+	    raise ValueError("Unreachable point")
+	
+	cos_theta3 = float(np.clip(cos_theta3, -1.0, 1.0))
+	
+	theta3 = math.acos(cos_theta3)
+	
+	theta2 = (
+	    math.atan2(-h, r)
+	    - math.atan2(
+	        L5 * math.sin(theta3),
+	        L3 + L5 * math.cos(theta3)
+	    )
+	)
+	
+	theta4 = -(theta2 + theta3)
+	
+	theta5 = -pi / 2.0
+		
 	# ==============================================================#
 	return lab_fk(theta1, theta2, theta3, theta4, theta5, theta6)
