@@ -6,14 +6,35 @@ import numpy as np
 # ========================= Student's code starts here =========================
 
 # Params for camera calibration
-theta = 0.0
-beta = 0.0
-tx = 0.0
-ty = 0.0
+x1 = 234
+y1 = 100
+x2 = 228
+y2 = 165
+
+theta = - np.arctan((234-228)/(65))
+beta = 64/.1
+tx = 230
+ty = 91
 
 # Function that converts image coord to world coord
 def IMG2W(col, row):
-    pass
+    x = 0
+    y = 0
+    coords = np.array([col, row, 0])
+    coords[0] = coords[0] - tx
+    coords[1] = coords[1] - ty
+    coords = coords * beta
+    coords[2] = .03
+    R = np.array([
+        [np.cos(theta), np.sin(theta), 0], 
+        [-np.sin(theta), np.cos(theta), 0], 
+        [0,0,1]]).T
+
+    coords = R @ (coords)
+
+    return coords
+
+    
 
 # ========================= Student's code ends here ===========================
 
@@ -54,13 +75,23 @@ def blob_search(image_raw, color):
 
     # ========================= Student's code starts here =========================
 
+    #calibration tool
+    #lower = (0, 180, 200)
+    #upper = (14, 220, 240)
+    #
+    
+    #pink
     lower = (165, 160, 100)
     upper = (180, 255, 255)
-
-    lower_darkblue = (99, 150, 20)
-    upper_darkblue = (119, 255, 120)
+    
+    #green
+    lower2 = (51, 100, 70)
+    upper2 = (71, 255, 255)
     # Define a mask using the lower and upper bounds of the target color
-    mask_image = cv2.inRange(hsv_image, lower, upper)
+    if (color == "pink"):
+        mask_image = cv2.inRange(hsv_image, lower, upper)
+    else:
+        mask_image = cv2.inRange(hsv_image, lower2, upper2)
 
     # ========================= Student's code ends here ===========================
 

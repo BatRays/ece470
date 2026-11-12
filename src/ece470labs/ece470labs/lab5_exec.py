@@ -54,8 +54,8 @@ class UR3e(Node):
 
         self.image_count = 0
         # store world coordinates for blocks (same idea as xw_yw_G, xw_yw_Y in lab5)
-        self.green_blocks = []   # list of (x, y) or (x, y, z)
-        self.yellow_blocks = []  # adjust to your needs
+        self.pink_blocks = []   # list of (x, y) or (x, y, z)
+        self.else_blocks = []  # adjust to your needs
 
 
         # State variables
@@ -98,8 +98,8 @@ class UR3e(Node):
         # cv2.line(cv_image, (0,50), (640,50), (0,0,0), 5)
 
         # Use your existing blob_search to detect block centers in world frame
-        self.green_blocks = blob_search(cv_image, "green")
-        self.yellow_blocks = blob_search(cv_image, "yellow")
+        self.pink_blocks = blob_search(cv_image, "pink")
+        self.else_blocks = blob_search(cv_image, "else")
 
 
 
@@ -182,12 +182,33 @@ class UR3e(Node):
                 return True
         return False
 
+    def wait(self,sec):
+        end = time.monotonic() + sec
+        while time.monotonic() < end:
+            rclpy.spin_once(self, timeout_sec=0.05)
 
     def move_block_vision(self, start_xy, target_xyz):
         """TODO: Pick block at start_xy and place it at target_xy, both in world frame.
         Hint: You can use your existing lab_invk, move_arm and set_io to pick and place a block.
         """
         # ========================= Student's code starts here =========================
+        
+
+        start_dest = lab_invk(start_xy[0], start_xy[1], .03, 0)
+        target_dest = lab_invk(target_xyz[0], target_xyz[1], target_xyz[2], 0)
+        
+        self.move_arm(start_dest)
+        self.set_io(0, 1.0)  # Turn on suction
+        self.wait(1)  # Delay to make sure suction cup has grasped
+
+        if (self.analog_in_0_value < 2.0):
+            self.get_logger().error("Suction cup failed to grasp the block!")
+            self.set_io(0, 0.0)
+            return 1
+        
+        self.move_arm(target_dest) 
+        self.set_io(0, 0.0)  # Turn off suction
+        move_arm(go_away)
         pass
         # ========================= Student's code ends here =========================
 
@@ -218,19 +239,27 @@ def main(args=None):
             rclpy.spin_once(node, timeout_sec=0.1)
 
         # Snapshot once 
-        green_snapshot = list(node.green_blocks)
-        node.get_logger().info(f"Snapshot green blocks: {green_snapshot}")
+        pink_snapshot = list(node.pink_blocks)
+        node.get_logger().info(f"Snapshot pink blocks: {pink_snapshot}")
 
         # Execute task once based on snapshot
         # ========================= Student's code starts here =========================
 
         """
         TODO: Use the vision-detected block positions to move blocks around. 
-        Hints: use the found green_blocks, yellow_blocks to move the blocks correspondingly. You will
+        Hints: use the found pink_blocks, else_blocks to move the blocks correspondingly. You will
         need to call move_block_vision(start_xy, target_xyz) where start_xy is the world coordinate of 
         the block you want to move, and target_xyz is the world coordinate of where you want to place it 
         (you can set z based on your needs).
         """
+        target11 = np.array([.32623, -0.03135, -0.38273])
+        target12 = np.array([.32623, -0.03135, -0.35062])
+        target21 = np.array([0.32998, 0.12288, -0.38156])
+        target22 = np.array([0.32998, 0.12288, -0.34950])
+        node.move_block_vision(pink_snapshot[0], target11)
+        node.move_block_vision(pink_snapshot[1], target12)
+        node.move_block_vision(else_snapshot[0], target21)
+        node.move_block_vision(else_snapshot[1], target22)
 
         # ========================= Student's code ends here ===========================
 
