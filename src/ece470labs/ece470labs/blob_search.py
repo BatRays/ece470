@@ -12,27 +12,24 @@ x2 = 228
 y2 = 165
 
 theta = - np.arctan((234-228)/(65))
-beta = 64/.1
+beta = np.hypot(6, 65) / 0.10
 tx = 230
 ty = 91
 
 # Function that converts image coord to world coord
 def IMG2W(col, row):
-    x = 0
-    y = 0
-    coords = np.array([col, row, 0])
-    coords[0] = coords[0] - tx
-    coords[1] = coords[1] - ty
-    coords = coords * beta
-    coords[2] = .03
-    R = np.array([
-        [np.cos(theta), np.sin(theta), 0], 
-        [-np.sin(theta), np.cos(theta), 0], 
-        [0,0,1]]).T
+    xc = (float(row) - origin_row) / beta
+    yc = (float(col) - origin_col) / beta
 
-    coords = R @ (coords)
+    Rcw = np.array([
+        [np.cos(theta), -np.sin(theta)],
+        [np.sin(theta),  np.cos(theta)]
+    ])
 
-    return coords
+    world_xy = Rcw.T @ np.array([xc, yc])
+
+    return np.array([world_xy[0], world_xy[1], 0.03])
+
 
     
 
