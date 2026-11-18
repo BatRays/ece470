@@ -240,8 +240,10 @@ def main(args=None):
 
         # Snapshot once 
         pink_snapshot = list(node.pink_blocks)
-        node.get_logger().info(f"Snapshot pink blocks: {pink_snapshot}")
-
+        else_snapshot = list(node.else_blocks)
+        
+        node.get_logger().info(f"Pink blocks: {pink_snapshot}")
+        node.get_logger().info(f"Green blocks: {else_snapshot}")
         # Execute task once based on snapshot
         # ========================= Student's code starts here =========================
 
