@@ -208,7 +208,7 @@ class UR3e(Node):
         
         self.move_arm(target_dest) 
         self.set_io(0, 0.0)  # Turn off suction
-        move_arm(go_away)
+        self.move_arm(go_away)
         pass
         # ========================= Student's code ends here =========================
 
