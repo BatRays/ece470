@@ -96,7 +96,10 @@ def lab_invk(xWgrip, yWgrip, zWgrip, yaw_WgripDegree):
 	
 	xgrip = float(xWgrip) * 1000 + 150
 	ygrip = float(yWgrip) * 1000 - 150
-	zgrip = float(zWgrip) * 1000
+	zgrip = float(zWgrip) * 1000 - 10
+	#xgrip = float(xWgrip) * 1000 
+	#ygrip = float(yWgrip) * 1000 
+	#zgrip = float(zWgrip) * 1000 
 	
 	yaw = math.radians(float(yaw_WgripDegree))
 	
