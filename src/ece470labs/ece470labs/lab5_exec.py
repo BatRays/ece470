@@ -193,10 +193,15 @@ class UR3e(Node):
         """
         # ========================= Student's code starts here =========================
         
-
-        start_dest = lab_invk(start_xy[0], start_xy[1], .03, 0)
+        print("start_xy:", start_xy)
+        print("target_xyz:", target_xyz)
+        start_dest = lab_invk(start_xy[0], start_xy[1], start_xy[2], 0)
+        print("start_dest:", start_dest)
         target_dest = lab_invk(target_xyz[0], target_xyz[1], target_xyz[2], 0)
-        
+        print("target_dest:", target_dest)
+        home = np.array([0.23,0.15,0.15])
+        home_dest = lab_invk(home[0], home[1], home[2], 0)
+        self.move_arm(home_dest)
         self.move_arm(start_dest)
         self.set_io(0, 1.0)  # Turn on suction
         self.wait(1)  # Delay to make sure suction cup has grasped
@@ -205,10 +210,10 @@ class UR3e(Node):
             self.get_logger().error("Suction cup failed to grasp the block!")
             self.set_io(0, 0.0)
             return 1
-        
+        self.move_arm(home_dest)
         self.move_arm(target_dest) 
         self.set_io(0, 0.0)  # Turn off suction
-        self.move_arm(go_away)
+        
         pass
         # ========================= Student's code ends here =========================
 
@@ -254,14 +259,27 @@ def main(args=None):
         the block you want to move, and target_xyz is the world coordinate of where you want to place it 
         (you can set z based on your needs).
         """
-        target11 = np.array([.32623, -0.03135, -0.38273])
-        target12 = np.array([.32623, -0.03135, -0.35062])
-        target21 = np.array([0.32998, 0.12288, -0.38156])
-        target22 = np.array([0.32998, 0.12288, -0.34950])
-        node.move_block_vision(pink_snapshot[0], target11)
-        node.move_block_vision(pink_snapshot[1], target12)
-        node.move_block_vision(else_snapshot[0], target21)
-        node.move_block_vision(else_snapshot[1], target22)
+        # .47396, 0.14289, 0.02490
+        pink_base_x = 0.47396 - 0.150
+        pink_base_y = -0.14289 + 0.15
+        pink_base_z = 0.031
+        block_height = 0.031
+
+        for i, block_xy in enumerate(pink_snapshot):
+            target_z = pink_base_z + (i * block_height)
+            target_xyz = np.array([pink_base_x, pink_base_y, target_z])
+
+            node.move_block_vision(block_xy, target_xyz)
+
+        else_base_x = 0.47491 - 0.150
+        else_base_y = 0.00873 + 0.15
+        else_base_z = 0.031
+
+        for i, block_xy in enumerate(else_snapshot):
+            target_z = else_base_z + (i * block_height)
+            target_xyz = np.array([else_base_x, else_base_y, target_z])
+            
+            node.move_block_vision(block_xy, target_xyz)
 
         # ========================= Student's code ends here ===========================
 
