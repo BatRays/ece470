@@ -6,29 +6,33 @@ import numpy as np
 # ========================= Student's code starts here =========================
 
 # Params for camera calibration
+#x1 = 234
+#y1 = 100
+#x2 = 228
+#y2 = 165
 x1 = 234
 y1 = 100
 x2 = 228
 y2 = 165
 
-theta = - np.arctan((234-228)/(65))
-beta = np.hypot(6, 65) / 0.10
-tx = 230
-ty = 91
+theta = 0
+beta = 640
+tx = 58 
+ty = 325 
 
 # Function that converts image coord to world coord
 def IMG2W(col, row):
-    xc = (float(row) - origin_row) / beta
-    yc = (float(col) - origin_col) / beta
+    xc = (float(row) - tx) / beta
+    yc = (float(col) - ty) / beta
 
     Rcw = np.array([
         [np.cos(theta), -np.sin(theta)],
         [np.sin(theta),  np.cos(theta)]
     ])
 
-    world_xy = Rcw.T @ np.array([xc, yc])
+    world_xy = Rcw @ np.array([xc, yc])
 
-    return np.array([world_xy[0], world_xy[1], 0.03])
+    return np.array([world_xy[0], world_xy[1], 0.0305])
 
 
     
@@ -47,7 +51,7 @@ def blob_search(image_raw, color):
 
     # Filter by Area.
     params.filterByArea = True
-    params.minArea = 0
+    params.minArea = 300
     params.maxArea = 1000
 
     # Filter by Circularity
